@@ -5,9 +5,9 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 
 /**
- * ObjectOutputString tiene problemas con las cabeceras, que es lo que usa para
- * leer. Si estamos constantemente cambiando hay partes del fichero que se
- * quedan innaccesibles.
+ * al parecer ObjectOutputString tiene problemas con las cabeceras, que es lo
+ * que usa para * leer. Si estamos constantemente cambiando hay partes del
+ * fichero que se quedan innaccesibles.
  *
  * Lo ideal es que solo tengamos una cabecera.
  *
@@ -15,7 +15,7 @@ import java.io.OutputStream;
  * con el ObjectOutputStream.
  *
  * ¿qué pasa si el fichero ya existe y ya tiene datos? Tenemos que escribir con
- * el MiObjectOutputStream. Porque no escribe cabeceras
+ * la clase MiObjectOutputStream. Porque ésta no escribe cabeceras
  */
 public class MiObjectOutputStream extends ObjectOutputStream {
 

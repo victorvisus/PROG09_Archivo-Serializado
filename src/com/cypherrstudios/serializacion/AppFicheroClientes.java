@@ -1,5 +1,6 @@
 package com.cypherrstudios.serializacion;
 
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -63,27 +64,27 @@ public class AppFicheroClientes {
                         if (fichero.exists()) {
 
                             //Creamos el Cliente
-                            System.out.println("Introduce un DNI");
+                            System.out.println("\nIntroduce un DNI");
                             NIF = teclado.next();
 
-                            System.out.println("Introduce el nombre");
+                            System.out.println("\nIntroduce el nombre");
                             nombre = teclado.next();
 
-                            System.out.println("Introduce el telefono");
+                            System.out.println("\nIntroduce el telefono");
                             telefono = teclado.next();
 
-                            System.out.println("Introduce la dirección");
+                            System.out.println("\nIntroduce la dirección");
                             direccion = teclado.next();
 
-                            System.out.println("Introduce el importe de la deuda");
+                            System.out.println("\nIntroduce el importe de la deuda");
                             deuda = teclado.nextDouble();
 
                             c = new Cliente(NIF, nombre, telefono, direccion, deuda);
 
-                            //Esto no vale para un ArrayList, porque lo añade entero
+                            //Esto no vale para un ArrayList, porque añade todo el contenido.
                             ObjectOutputStream oos;
 
-                            //ESTO ES LO MÁS IMPORTANTE
+                            //ESTO ES IMPORTANTE, esta relacionado con la clase MiObjectOutputStream
                             if (fichero.length() == 0) {
                                 oos = new ObjectOutputStream(new FileOutputStream(fichero));
 
@@ -92,10 +93,10 @@ public class AppFicheroClientes {
                             }
                             oos.writeObject(c);
 
-                            System.out.println("Se ha añadido correctamente");
+                            System.out.println("\nSe ha añadido correctamente");
 
                         } else {
-                            System.out.println("Debes crear el fichero");
+                            System.out.println("*** No existe ningún fichero ***");
                         }
                         break;
                     case 2:
@@ -113,7 +114,7 @@ public class AppFicheroClientes {
 
                             }
                         } else {
-                            System.out.println("Debes crear el fichero");
+                            System.out.println("*** No existe ningún fichero ***");
                         }
 
                         break;
@@ -129,9 +130,9 @@ public class AppFicheroClientes {
                         //Borrar fichero de clientes completamente
                         if (fichero.exists()) {
                             fichero.delete();
-                            System.out.println("El fichero se ha borrado");
+                            System.out.println("\nEl fichero se ha borrado");
                         } else {
-                            System.out.println("No se puede borrar ya que no existe el fichero");
+                            System.out.println("*** No existe ningún fichero que borrar ***");
                         }
 
                         break;
@@ -146,6 +147,8 @@ public class AppFicheroClientes {
                 teclado.next();
             } catch (FileNotFoundException ex) {
                 Logger.getLogger(AppFicheroClientes.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (EOFException e) {
+                System.out.println("Se ha llegado al final del archivo");
             } catch (IOException | ClassNotFoundException ex) {
                 Logger.getLogger(AppFicheroClientes.class.getName()).log(Level.SEVERE, null, ex);
             }
