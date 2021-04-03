@@ -24,7 +24,7 @@ public class AppFicheroClientes {
             //Crea el fichero
             fichero.createNewFile();
         } catch (IOException ex) {
-            System.out.println("Ha habido un error al crear el fichero");
+            System.out.println("Ha habido un error al crear el fichero.");
         }
 
         MenuApp(fichero);
