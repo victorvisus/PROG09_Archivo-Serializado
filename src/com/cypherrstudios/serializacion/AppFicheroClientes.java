@@ -30,6 +30,11 @@ public class AppFicheroClientes {
         MenuApp(fichero);
     }
 
+    /**
+     * Crea y gestiona el menú del programa
+     *
+     * @param fichero
+     */
     private static void MenuApp(File fichero) {
 
         //Esto sirve para que en caso de poner espacios no afecte
