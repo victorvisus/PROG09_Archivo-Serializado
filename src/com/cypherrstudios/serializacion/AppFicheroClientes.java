@@ -8,23 +8,43 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.HashMap;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Tarea correspondiente al tema 9 de la asignatura de Programación.
+ *
+ * Aplicación que gestiona los clientes de una empresa. Esos datos, se
+ * almacenarán en un fichero serializado, denominado clientes.dat.
+ *
+ * @author Victor Visús García
+ * @version 1.0
+ *
+ */
 public class AppFicheroClientes {
 
     private static Scanner teclado = new Scanner(System.in);
 
+    /**
+     * Clase main. En cuanto se ejecuta el programa, crea el fichero -si no
+     * existe-
+     *
+     * @throws lanza un error si ha habido algún problema con la creación del
+     * fichero
+     */
     public static void main(String[] args) {
         File fichero = new File("clientes.dat");
 
-        try {
-            //Crea el fichero
-            fichero.createNewFile();
-        } catch (IOException ex) {
-            System.out.println("Ha habido un error al crear el fichero.");
+        if (!fichero.exists()) {
+            try {
+                //Crea el fichero
+                fichero.createNewFile();
+            } catch (IOException ex) {
+                System.out.println("Ha habido un error al crear el fichero.");
+            }
         }
 
         MenuApp(fichero);
@@ -42,11 +62,12 @@ public class AppFicheroClientes {
         boolean salir = false;
         int opcion; //Guardaremos la opcion del usuario
 
+        HashMap<String, String> datosCliente = new HashMap<>();
+
         String NIF, nombre, telefono, direccion;
+        double deuda;
 
         Cliente c;
-
-        double deuda;
 
         while (!salir) {
 
@@ -69,20 +90,15 @@ public class AppFicheroClientes {
                         if (fichero.exists()) {
 
                             //Creamos el Cliente
-                            System.out.println("\nIntroduce un DNI");
-                            NIF = teclado.next();
+                            //Llama al método que solicita los datos y los almacena en un hashmap
+                            solicitarDatos(datosCliente);
 
-                            System.out.println("\nIntroduce el nombre");
-                            nombre = teclado.next();
-
-                            System.out.println("\nIntroduce el telefono");
-                            telefono = teclado.next();
-
-                            System.out.println("\nIntroduce la dirección");
-                            direccion = teclado.next();
-
-                            System.out.println("\nIntroduce el importe de la deuda");
-                            deuda = teclado.nextDouble();
+                            NIF = datosCliente.get("nif");
+                            nombre = datosCliente.get("nombre");
+                            telefono = datosCliente.get("telefono");
+                            direccion = datosCliente.get("direccion");
+                            //Asigno el valor de la clave deuda a la variable deuda, convirtiendo el String a Double.
+                            deuda = Double.parseDouble(datosCliente.get("deuda").replace(",", "."));
 
                             c = new Cliente(NIF, nombre, telefono, direccion, deuda);
 
@@ -158,5 +174,40 @@ public class AppFicheroClientes {
                 Logger.getLogger(AppFicheroClientes.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+    }
+
+    /**
+     * Solicita los datos necesarios para crear el objeto cliente.
+     * <p>
+     * Los almacena en el HashMap datosCliente, con su clave y al valor le
+     * asigna la información introducida por el usuario</p>
+     *
+     * @param datosCliente
+     * @return datosCliente actualizado con los datos introducidos.
+     */
+    public static HashMap solicitarDatos(HashMap datosCliente) {
+        teclado.useDelimiter("\n");
+
+        System.out.println("\nIntroduce un DNI");
+        //NIF = teclado.next();
+        datosCliente.put("nif", teclado.next());
+
+        System.out.println("\nIntroduce el nombre");
+        //nombre = teclado.next();
+        datosCliente.put("nombre", teclado.next());
+
+        System.out.println("\nIntroduce el telefono");
+        //telefono = teclado.next();
+        datosCliente.put("telefono", teclado.next());
+
+        System.out.println("\nIntroduce la dirección");
+        //direccion = teclado.next();
+        datosCliente.put("direccion", teclado.next());
+
+        System.out.println("\nIntroduce el importe de la deuda");
+        //deuda = teclado.nextDouble();
+        datosCliente.put("deuda", teclado.next());
+
+        return datosCliente;
     }
 }
