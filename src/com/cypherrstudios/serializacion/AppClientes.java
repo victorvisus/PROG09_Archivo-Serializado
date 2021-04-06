@@ -19,6 +19,9 @@ public class AppClientes {
     private static Scanner teclado = new Scanner(System.in);
 
     public static void main(String[] args) {
+        /* Crea el objeto de la clase GestorFichero, que usaremos para realizar
+        las operaciones del programa */
+
         GestorFichero<Cliente> gestor = new GestorFichero("clientes.dat");
 
         MenuApp(gestor);

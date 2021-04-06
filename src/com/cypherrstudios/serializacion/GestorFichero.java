@@ -48,6 +48,9 @@ public class GestorFichero<T> {
      * Primer Constructor, crea el fichero - con el nombre pasado por el
      * parámetro- y el arraylist.
      *
+     * Mediante el método obtenerDatos(), agrega al arrayList el contenido del
+     * fichero (si ya existe)
+     *
      * @param fichero : String en el que se indica el nombre que tiene que darle
      * al fichero.
      */
@@ -60,6 +63,8 @@ public class GestorFichero<T> {
     /**
      * Segundo Constructor, asigna el fichero pasado al atributo de la clase, y
      * crea el arraylist.
+     *
+     * No llama al método obtenerDatos() ¿debería hacerlo?
      *
      * @param fichero : Recibe un fichero ya creado.
      */
@@ -81,17 +86,21 @@ public class GestorFichero<T> {
     /**
      * Lee y extrae los datos del fichero y los añade al arraylist.
      *
-     * Si el fichero existe, entonces lee el archivo y lo mete en el objeto ois
+     * Si el fichero existe, entonces lee el archivo y lo mete en el objeto
+     * "elemento" (de tipo genérico, el que reciba el arraylist), a través del
+     * objeto ois (de tipo ObjectInputStream, por lo que hay que hacerle un
+     * casting). Después lo añades al arraylist "datos".
      */
     public void obtenerDatos() {
 
         if (fichero.exists()) {
             T elemento;
-            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fichero))) {
+            //Crea el objeto ObjectInputStream y le pasa el fichero
+            try ( ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fichero))) {
                 //hasta que no salte la exception del final del archivo
                 while (true) {
-                    elemento = (T) ois.readObject();
-                    datos.add(elemento);
+                    elemento = (T) ois.readObject(); //Lee el contenido del fichero
+                    datos.add(elemento); //Añade el contenido al arraylist
                 }
 
             } catch (FileNotFoundException ex) {
@@ -101,7 +110,6 @@ public class GestorFichero<T> {
             } catch (IOException | ClassNotFoundException ex) {
                 System.out.println(ex.getMessage());
             }
-
         }
     }
 
@@ -118,7 +126,7 @@ public class GestorFichero<T> {
     public void guardarDato(T elemento) {
 
         if (fichero.exists() && fichero.length() > 0) {
-            try (MiObjectOutputStream oos = new MiObjectOutputStream(new FileOutputStream(fichero, true))) {
+            try ( MiObjectOutputStream oos = new MiObjectOutputStream(new FileOutputStream(fichero, true))) {
 
                 oos.writeObject(elemento);
 
@@ -128,7 +136,7 @@ public class GestorFichero<T> {
                 System.out.println(ex.getMessage());
             }
         } else {
-            try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(fichero))) {
+            try ( ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(fichero))) {
 
                 oos.writeObject(elemento);
 
@@ -137,9 +145,7 @@ public class GestorFichero<T> {
             } catch (IOException ex) {
                 System.out.println(ex.getMessage());
             }
-
         }
-
         datos.add(elemento);
 
     }
@@ -161,7 +167,10 @@ public class GestorFichero<T> {
     }
 
     /**
-     * Muestra los datos de la lista, la clase debe tener un toString()
+     * Muestra los datos de la lista, la clase debe tener un toString().
+     *
+     * Previamente, mediante el método obtenerDatos(), se ha añadido el
+     * contenido del archivo (si existe) al arraylist
      */
     public void mostrarDatos() {
         for (T e : datos) {
