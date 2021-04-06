@@ -3,6 +3,8 @@ package com.cypherrstudios.serializacion;
 import java.util.HashMap;
 import java.util.InputMismatchException;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Tarea correspondiente al tema 9 de la asignatura de Programación.
@@ -38,6 +40,7 @@ public class AppClientes {
         //Esto sirve para que en caso de poner espacios no afecte
         teclado.useDelimiter("\n");
         boolean salir = false;
+
         int opcion; //Guardaremos la opcion del usuario
 
         //Creo un HashMap para almacenar los datos para crear un nuevo Objeto Cliente
@@ -80,11 +83,16 @@ public class AppClientes {
                         //Asigno el valor de la clave deuda a la variable deuda, convirtiendo el String a Double.
                         deuda = Double.parseDouble(datosCliente.get("deuda").replace(",", "."));
 
-                        c = new Cliente(NIF, nombre, telefono, direccion, deuda);
+                        cb = new Cliente(NIF); // Creo un objeto para comprobar si existe el cliente
 
-                        gestor.guardarDato(c);
-
-                        System.out.println("\nSe ha añadido correctamente");
+                        //Comprueba que no exista el cliente, si no existe lo añade
+                        if (!gestor.existeDato(cb)) {
+                            c = new Cliente(NIF, nombre, telefono, direccion, deuda);
+                            gestor.guardarDato(c);
+                            System.out.println("\nSe ha añadido correctamente");
+                        } else {
+                            System.out.println("*** El cliente ya existe ***");
+                        }
 
                         break;
                     case 2:
@@ -105,6 +113,10 @@ public class AppClientes {
                             cb = new Cliente(solicitaDatoParaBuscar());
                             if (gestor.existeDato(cb)) {
                                 System.out.println("El Cliente se encuentra en la lista");
+
+                                /*
+                                Estaria bien que imprimiera los datos del cliente que se ha buscado.
+                                 */
                             } else {
                                 System.out.println("El Cliente con el NIF indicado no existe");
                             }
@@ -176,9 +188,14 @@ public class AppClientes {
         //direccion = teclado.next();
         datosCliente.put("direccion", teclado.next());
 
-        System.out.println("\nIntroduce el importe de la deuda");
-        //deuda = teclado.nextDouble();
-        datosCliente.put("deuda", teclado.next());
+        String deuda = "";
+        //Le solicita el dato al usuario hasta que no introduzca solo caracteres numéticos
+        do {
+            System.out.println("\nIntroduce el importe de la deuda");
+            deuda = teclado.next();
+        } while (!esNumero(deuda));
+
+        datosCliente.put("deuda", deuda);
 
         return datosCliente;
     }
@@ -194,5 +211,21 @@ public class AppClientes {
         String nifBuscar = teclado.next();
 
         return nifBuscar;
+    }
+
+    /**
+     * Comprueba que en el String introducido sean todo número para que no salte
+     * error al hacer el casting a double
+     *
+     * @param deuda : String introducido por el usuario
+     * @return true si son números, en caso contrario false
+     */
+    private static boolean esNumero(String deuda) {
+
+        if ((deuda.matches("[+-]?\\d*(\\.\\d+)?") || deuda.equals("")) == false) {
+            System.out.println("*** Solo se admiten caracteres numéricos ***");
+            return false;
+        }
+        return true;
     }
 }
