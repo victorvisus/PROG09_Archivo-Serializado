@@ -84,14 +84,9 @@ public class AppClientes {
 
                         cb = new Cliente(NIF); // Creo un objeto para comprobar si existe el cliente
 
-                        //Comprueba que no exista el cliente, si no existe lo añade
-                        if (!gestor.existeDato(cb)) {
-                            c = new Cliente(NIF, nombre, telefono, direccion, deuda);
-                            gestor.guardarDato(c);
-                            System.out.println("\nSe ha añadido correctamente");
-                        } else {
-                            System.out.println("*** El cliente ya existe ***");
-                        }
+                        c = new Cliente(NIF, nombre, telefono, direccion, deuda);
+                        gestor.guardarDato(c);
+                        System.out.println("\nSe ha añadido correctamente");
 
                         break;
                     case 2:
@@ -179,12 +174,11 @@ public class AppClientes {
         teclado.useDelimiter("\n");
 
         String NIF;
-        do {
-            System.out.println("\nIntroduce un DNI");
-            NIF = teclado.next().toUpperCase();
-        } while (!estaVacio(NIF));
+        System.out.println("\nIntroduce un DNI");
+        NIF = teclado.next().toUpperCase();
         cb.setNIF(NIF);
 
+        // Comprueba que no exista el cliente, mediante el NIF
         if (!gestor.existeDato(cb)) {
             datosCliente.put("nif", NIF);
 
@@ -205,12 +199,14 @@ public class AppClientes {
             do {
                 System.out.println("\nIntroduce el importe de la deuda");
                 deuda = teclado.next();
-            } while (!esNumero(deuda) || !estaVacio(deuda));
+            } while (!esNumero(deuda));
 
             datosCliente.put("deuda", deuda);
         } else {
             throw new Exception("*** El NIF introducido ya existe, pulsa INTRO para continuar ***");
         }
+        estaVacio(datosCliente);
+
         return datosCliente;
     }
 
@@ -245,32 +241,34 @@ public class AppClientes {
         return true;
     }
 
-    private static boolean estaVacio(String campo) {
-
-        if (campo == null || campo.length() == 0) {
-            System.out.println("*** Este campo no puede estar vacio ***");
-            return false;
-        }
-        return true;
-    }
-
-//    private static boolean estaVacioHash(String campo) {
+//    private static boolean estaVacio(String campo) {
+//
 //        if (campo == null || campo.length() == 0) {
 //            System.out.println("*** Este campo no puede estar vacio ***");
 //            return false;
 //        }
 //        return true;
 //    }
+    /**
+     * Comprueba que ninguno de los datos solicitados para crear el cliente
+     * esten vacios. Si alguno de ellos esta vacio pide el valor para ese campo
+     *
+     * @param datosCliente
+     * @return datosCliente : completado con los datos faltantes, si fuera el
+     * caso, si no lo devuelve tal cual.
+     */
+    private static HashMap estaVacio(HashMap datosCliente) {
+        Iterator<Entry<String, String>> it = datosCliente.entrySet().iterator();
 
-//    private static void pruebaIterator(HashMap datosCliente) {
-//        Iterator<Entry<String, String>> it = datosCliente.entrySet().iterator();
-//
-//        while (it.hasNext()) {
-//            Entry<String, String> campo = it.next();
-//            if (campo.getValue() == null || campo.getValue().length() == 0) {
-//                System.out.println(campo.getKey() + "El campo no puede estar vacio");
-//            }
-//            System.out.println(campo.getKey() + " " + campo.getValue());
-//        }
-//    }
+        while (it.hasNext()) {
+            Entry<String, String> campo = it.next();
+            if (campo.getValue() == null || campo.getValue().length() == 0) {
+                System.out.println("El campo \"" + campo.getKey().toUpperCase() + "\" El campo no puede estar vacio"
+                        + "\nPor favor introduce un valor para " + campo.getKey() + ":");
+                datosCliente.put(campo.getKey(), teclado.next());
+
+            }
+        }
+        return datosCliente;
+    }
 }
