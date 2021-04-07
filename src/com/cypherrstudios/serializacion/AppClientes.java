@@ -3,6 +3,8 @@ package com.cypherrstudios.serializacion;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.InputMismatchException;
+import java.util.Iterator;
+import java.util.Map.Entry;
 import java.util.Scanner;
 
 /**
@@ -176,9 +178,13 @@ public class AppClientes {
     private static HashMap solicitarDatos(HashMap datosCliente) throws Exception {
         teclado.useDelimiter("\n");
 
-        System.out.println("\nIntroduce un DNI");
-        String NIF = teclado.next().toUpperCase();
+        String NIF;
+        do {
+            System.out.println("\nIntroduce un DNI");
+            NIF = teclado.next().toUpperCase();
+        } while (!estaVacio(NIF));
         cb.setNIF(NIF);
+
         if (!gestor.existeDato(cb)) {
             datosCliente.put("nif", NIF);
 
@@ -199,10 +205,9 @@ public class AppClientes {
             do {
                 System.out.println("\nIntroduce el importe de la deuda");
                 deuda = teclado.next();
-            } while (!esNumero(deuda));
+            } while (!esNumero(deuda) || !estaVacio(deuda));
 
             datosCliente.put("deuda", deuda);
-
         } else {
             throw new Exception("*** El NIF introducido ya existe, pulsa INTRO para continuar ***");
         }
@@ -240,4 +245,32 @@ public class AppClientes {
         return true;
     }
 
+    private static boolean estaVacio(String campo) {
+
+        if (campo == null || campo.length() == 0) {
+            System.out.println("*** Este campo no puede estar vacio ***");
+            return false;
+        }
+        return true;
+    }
+
+//    private static boolean estaVacioHash(String campo) {
+//        if (campo == null || campo.length() == 0) {
+//            System.out.println("*** Este campo no puede estar vacio ***");
+//            return false;
+//        }
+//        return true;
+//    }
+
+//    private static void pruebaIterator(HashMap datosCliente) {
+//        Iterator<Entry<String, String>> it = datosCliente.entrySet().iterator();
+//
+//        while (it.hasNext()) {
+//            Entry<String, String> campo = it.next();
+//            if (campo.getValue() == null || campo.getValue().length() == 0) {
+//                System.out.println(campo.getKey() + "El campo no puede estar vacio");
+//            }
+//            System.out.println(campo.getKey() + " " + campo.getValue());
+//        }
+//    }
 }
