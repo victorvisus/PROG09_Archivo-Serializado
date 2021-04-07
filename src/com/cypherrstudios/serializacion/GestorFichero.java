@@ -196,6 +196,23 @@ public class GestorFichero<T> {
     }
 
     /**
+     * Devuelve los datos del cliente enviado como parámetro
+     *
+     * @param elemento
+     * @return
+     */
+    public String imprimirCliente(T elemento) {
+        int pos = 0;
+
+        for (T e : datos) {
+            if (e.equals(elemento)) {
+                pos++;
+            }
+        }
+
+        return datos.get(pos).toString();
+    }
+    /**
      * No se puede entrar en un fichero y decirle que borre algo, hay que
      * eliminar el fichero y volver a crearlo sin el dato que se quiera eliminar
      *

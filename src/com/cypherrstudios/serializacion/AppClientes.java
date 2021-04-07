@@ -24,22 +24,12 @@ public class AppClientes {
     //Objeto Cliente para crear los objetos que se añadiran al fichero
     private static Cliente c = new Cliente();
     //Este lo usaremos para realizar las busquedas
-    private static Cliente cb = new Cliente();
+    private static Cliente auxC = new Cliente();
     /* Crea el objeto de la clase GestorFichero, que usaremos para realizar
        las operaciones del programa */
     private static GestorFichero<Cliente> gestor = new GestorFichero("clientes.dat");
 
     public static void main(String[] args) {
-        MenuApp();
-    }
-
-    /**
-     * Crea y gestiona el menú del programa.
-     *
-     * @param gestor : objeto de la clase que se encarga de todas las
-     * operaciones con el fichero
-     */
-    private static void MenuApp() {
 
         //Esto sirve para que en caso de poner espacios no afecte
         teclado.useDelimiter("\n");
@@ -82,7 +72,7 @@ public class AppClientes {
                         //Asigno el valor de la clave deuda a la variable deuda, convirtiendo el String a Double.
                         deuda = Double.parseDouble(datosCliente.get("deuda").replace(",", "."));
 
-                        cb = new Cliente(NIF); // Creo un objeto para comprobar si existe el cliente
+                        auxC = new Cliente(NIF); // Creo un objeto para comprobar si existe el cliente
 
                         c = new Cliente(NIF, nombre, telefono, direccion, deuda);
                         gestor.guardarDato(c);
@@ -104,13 +94,10 @@ public class AppClientes {
                     case 3:
                         //Buscar clientes.//
                         if (gestor.existeFichero()) {
-                            cb = new Cliente(solicitaDatoParaBuscar());
-                            if (gestor.existeDato(cb)) {
-                                System.out.println("El Cliente se encuentra en la lista");
-
-                                /*
-                                Estaria bien que imprimiera los datos del cliente que se ha buscado.
-                                 */
+                            auxC = new Cliente(solicitaDatoParaBuscar());
+                            if (gestor.existeDato(auxC)) {
+                                System.out.println("El Cliente se encuentra en la lista"
+                                        + "\nSus datos son: " + gestor.imprimirCliente(auxC));
                             } else {
                                 System.out.println("El Cliente con el NIF indicado no existe");
                             }
@@ -121,10 +108,11 @@ public class AppClientes {
                     case 4:
                         //Borrar cliente.//
                         if (gestor.existeFichero()) {
-                            cb = new Cliente(solicitaDatoParaBuscar());
-                            if (gestor.existeDato(cb)) {
-                                gestor.borrarDatos(cb);
-                                System.out.println("El Cliente se ha borrado correctamente");
+                            auxC = new Cliente(solicitaDatoParaBuscar());
+                            if (gestor.existeDato(auxC)) {
+                                gestor.borrarDatos(auxC);
+                                System.out.println("El Cliente se ha borrado correctamente"
+                                        + "\nLos datos eliminados son: " + gestor.imprimirCliente(auxC));
 
                             } else {
                                 System.out.println("*** El Cliente con el NIF indicado no existe ***");
@@ -176,10 +164,10 @@ public class AppClientes {
         String NIF;
         System.out.println("\nIntroduce un DNI");
         NIF = teclado.next().toUpperCase();
-        cb.setNIF(NIF);
+        auxC.setNIF(NIF);
 
         // Comprueba que no exista el cliente, mediante el NIF
-        if (!gestor.existeDato(cb)) {
+        if (!gestor.existeDato(auxC)) {
             datosCliente.put("nif", NIF);
 
             System.out.println("\nIntroduce el nombre");
@@ -263,7 +251,7 @@ public class AppClientes {
         while (it.hasNext()) {
             Entry<String, String> campo = it.next();
             if (campo.getValue() == null || campo.getValue().length() == 0) {
-                System.out.println("El campo \"" + campo.getKey().toUpperCase() + "\" El campo no puede estar vacio"
+                System.out.println("El campo \"" + campo.getKey().toUpperCase() + "\" no puede estar vacio"
                         + "\nPor favor introduce un valor para " + campo.getKey() + ":");
                 datosCliente.put(campo.getKey(), teclado.next());
 
