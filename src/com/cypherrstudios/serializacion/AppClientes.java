@@ -202,6 +202,7 @@ public class AppClientes {
             } while (!esNumero(deuda));
 
             datosCliente.put("deuda", deuda);
+
         } else {
             throw new Exception("*** El NIF introducido ya existe, pulsa INTRO para continuar ***");
         }
@@ -221,6 +222,7 @@ public class AppClientes {
         return nifBuscar;
     }
 
+    //Comprobaciones
     /**
      * Comprueba que en el String introducido sean todo número para que no salte
      * error al hacer el casting a double
@@ -237,4 +239,5 @@ public class AppClientes {
         }
         return true;
     }
+
 }
