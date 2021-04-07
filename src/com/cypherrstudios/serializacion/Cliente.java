@@ -12,6 +12,12 @@ public class Cliente implements Serializable {
     private double deuda;
 
     /**
+     * Constructor vacio
+     */
+    public Cliente() {
+    }
+
+    /**
      * Constructor estandar de la clase
      *
      * @param NIF

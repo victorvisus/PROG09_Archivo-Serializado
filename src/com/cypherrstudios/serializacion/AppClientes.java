@@ -1,10 +1,9 @@
 package com.cypherrstudios.serializacion;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.InputMismatchException;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Tarea correspondiente al tema 9 de la asignatura de Programación.
@@ -13,20 +12,23 @@ import java.util.logging.Logger;
  * almacenarán en un fichero serializado, denominado clientes.dat.
  *
  * @author Victor Visús García
- * @version 1.0
+ * @version 1.5
  *
  */
 public class AppClientes {
 
     private static Scanner teclado = new Scanner(System.in);
 
+    //Objeto Cliente para crear los objetos que se añadiran al fichero
+    private static Cliente c = new Cliente();
+    //Este lo usaremos para realizar las busquedas
+    private static Cliente cb = new Cliente();
+    /* Crea el objeto de la clase GestorFichero, que usaremos para realizar
+       las operaciones del programa */
+    private static GestorFichero<Cliente> gestor = new GestorFichero("clientes.dat");
+
     public static void main(String[] args) {
-        /* Crea el objeto de la clase GestorFichero, que usaremos para realizar
-        las operaciones del programa */
-
-        GestorFichero<Cliente> gestor = new GestorFichero("clientes.dat");
-
-        MenuApp(gestor);
+        MenuApp();
     }
 
     /**
@@ -35,7 +37,7 @@ public class AppClientes {
      * @param gestor : objeto de la clase que se encarga de todas las
      * operaciones con el fichero
      */
-    private static void MenuApp(GestorFichero gestor) {
+    private static void MenuApp() {
 
         //Esto sirve para que en caso de poner espacios no afecte
         teclado.useDelimiter("\n");
@@ -48,11 +50,6 @@ public class AppClientes {
 
         String NIF, nombre, telefono, direccion;
         double deuda;
-
-        //Objeto Cliente para crear los objetos que se añadiran al fichero
-        Cliente c;
-        //Este lo usaremos para realizar las busquedas
-        Cliente cb;
 
         while (!salir) {
 
@@ -70,7 +67,7 @@ public class AppClientes {
 
                 switch (opcion) {
                     case 1:
-                        //Añadir cliente.
+                        //Añadir cliente.//
 
                         //Creamos el Cliente
                         //Llama al método que solicita los datos y los almacena en un hashmap
@@ -96,7 +93,7 @@ public class AppClientes {
 
                         break;
                     case 2:
-                        //Listar clientes
+                        //Listar clientes.//
 
                         if (gestor.existeFichero()) {
                             gestor.mostrarDatos();
@@ -108,7 +105,7 @@ public class AppClientes {
                         break;
 
                     case 3:
-                        //Buscar clientes
+                        //Buscar clientes.//
                         if (gestor.existeFichero()) {
                             cb = new Cliente(solicitaDatoParaBuscar());
                             if (gestor.existeDato(cb)) {
@@ -125,15 +122,15 @@ public class AppClientes {
                         }
                         break;
                     case 4:
-                        //Borrar cliente
+                        //Borrar cliente.//
                         if (gestor.existeFichero()) {
                             cb = new Cliente(solicitaDatoParaBuscar());
                             if (gestor.existeDato(cb)) {
                                 gestor.borrarDatos(cb);
-                                System.out.println("El Cliente se encuentra en la lista");
+                                System.out.println("El Cliente se ha borrado correctamente");
 
                             } else {
-                                System.out.println("El Cliente con el NIF indicado no existe");
+                                System.out.println("*** El Cliente con el NIF indicado no existe ***");
                             }
 
                         } else {
@@ -143,7 +140,7 @@ public class AppClientes {
                         break;
 
                     case 5:
-                        //Borrar fichero de clientes completamente
+                        //Borrar fichero de clientes completamente.//
                         gestor.borrarFichero();
 
                         break;
@@ -156,6 +153,12 @@ public class AppClientes {
             } catch (InputMismatchException e) {
                 System.out.println("Debes insertar un número");
                 teclado.next();
+            } catch (Exception ex) {
+                System.out.println(ex.getMessage());
+                try {
+                    System.in.read();
+                } catch (IOException e) {
+                }
             }
         }
     }
@@ -164,39 +167,44 @@ public class AppClientes {
      * Solicita los datos necesarios para crear el objeto cliente.
      * <p>
      * Los almacena en el HashMap datosCliente, con su clave y al valor le
-     * asigna la información introducida por el usuario</p>
+     * asigna la información introducida por el usuario.</p>
      *
      * @param datosCliente
      * @return datosCliente actualizado con los datos introducidos.
+     * @throws : lanza un error, si el NIF ya existe, y vuelve al menú principal
      */
-    private static HashMap solicitarDatos(HashMap datosCliente) {
+    private static HashMap solicitarDatos(HashMap datosCliente) throws Exception {
         teclado.useDelimiter("\n");
 
         System.out.println("\nIntroduce un DNI");
-        //NIF = teclado.next();
-        datosCliente.put("nif", teclado.next());
+        String NIF = teclado.next().toUpperCase();
+        cb.setNIF(NIF);
+        if (!gestor.existeDato(cb)) {
+            datosCliente.put("nif", NIF);
 
-        System.out.println("\nIntroduce el nombre");
-        //nombre = teclado.next();
-        datosCliente.put("nombre", teclado.next());
+            System.out.println("\nIntroduce el nombre");
+            //nombre = teclado.next();
+            datosCliente.put("nombre", teclado.next());
 
-        System.out.println("\nIntroduce el telefono");
-        //telefono = teclado.next();
-        datosCliente.put("telefono", teclado.next());
+            System.out.println("\nIntroduce el telefono");
+            //telefono = teclado.next();
+            datosCliente.put("telefono", teclado.next());
 
-        System.out.println("\nIntroduce la dirección");
-        //direccion = teclado.next();
-        datosCliente.put("direccion", teclado.next());
+            System.out.println("\nIntroduce la dirección");
+            //direccion = teclado.next();
+            datosCliente.put("direccion", teclado.next());
 
-        String deuda = "";
-        //Le solicita el dato al usuario hasta que no introduzca solo caracteres numéticos
-        do {
-            System.out.println("\nIntroduce el importe de la deuda");
-            deuda = teclado.next();
-        } while (!esNumero(deuda));
+            String deuda = "";
+            //Le solicita el dato al usuario hasta que no introduzca solo caracteres numéticos
+            do {
+                System.out.println("\nIntroduce el importe de la deuda");
+                deuda = teclado.next();
+            } while (!esNumero(deuda));
 
-        datosCliente.put("deuda", deuda);
-
+            datosCliente.put("deuda", deuda);
+        } else {
+            throw new Exception("*** El NIF introducido ya existe, pulsa INTRO para continuar ***");
+        }
         return datosCliente;
     }
 
@@ -208,7 +216,7 @@ public class AppClientes {
     private static String solicitaDatoParaBuscar() {
 
         System.out.println("Introduce el NIF del cliente");
-        String nifBuscar = teclado.next();
+        String nifBuscar = teclado.next().toUpperCase();
 
         return nifBuscar;
     }
@@ -224,6 +232,7 @@ public class AppClientes {
 
         if ((deuda.matches("[+-]?\\d*(\\.\\d+)?") || deuda.equals("")) == false) {
             System.out.println("*** Solo se admiten caracteres numéricos ***");
+
             return false;
         }
         return true;
