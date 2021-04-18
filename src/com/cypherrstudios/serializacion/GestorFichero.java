@@ -216,8 +216,8 @@ public class GestorFichero<T> {
      * No se puede entrar en un fichero y decirle que borre algo, hay que
      * eliminar el fichero y volver a crearlo sin el dato que se quiera eliminar
      *
-     * Elimina el elemento pasado como parámetro, hace una copia del arraylist
-     * "datos", lo reinicia y elimina el fichero.
+     * Elimina el elemento pasado por parámetro, hace una copia del arraylist
+     * "datos", lo reinicia, elimina el fichero y añade.
      *
      * Mediante el foreach añade los datos del arraylist "copia" al "nuevo"
      * fichero y al "nuevo" arraylist datos.

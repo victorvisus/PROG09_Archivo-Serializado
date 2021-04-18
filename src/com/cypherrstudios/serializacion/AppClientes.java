@@ -111,8 +111,7 @@ public class AppClientes {
                             auxC = new Cliente(solicitaDatoParaBuscar());
                             if (gestor.existeDato(auxC)) {
                                 gestor.borrarDatos(auxC);
-                                System.out.println("El Cliente se ha borrado correctamente"
-                                        + "\nLos datos eliminados son: " + gestor.imprimirCliente(auxC));
+                                System.out.println("El Cliente se ha borrado correctamente");
 
                             } else {
                                 System.out.println("*** El Cliente con el NIF indicado no existe ***");
